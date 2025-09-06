@@ -1,9 +1,8 @@
-fun part1(input: List<String>): Int {
-    return input.sumOf { it.toInt() }
-}
+private val parseInput = { input: List<String> -> input.map { it.toInt() } }
 
-fun part2(input: List<String>): Int {
-    val input = input.map { it.toInt() }
+private val part1 = { input: List<Int> -> input.sum() }
+
+private fun part2(input: List<Int>): Int {
     val frequencies = mutableListOf(0)
     var index = 0
 
@@ -16,12 +15,13 @@ fun part2(input: List<String>): Int {
     }
 }
 
+
 fun main() {
-    val testInput = readInput("Day01_test")
+    val testInput = parseInput(readInput("Day01_test"))
     check(part1(testInput) == 3)
     check(part2(testInput) == 2)
 
-    val input = readInput("Day01")
+    val input = parseInput(readInput("Day01"))
     check(part1(input) == 599)
     check(part2(input) == 81204)
 }
