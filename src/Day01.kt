@@ -1,16 +1,14 @@
 private val parseInput = { input: List<String> -> input.map { it.toInt() } }
 
 private val part1 = { input: List<Int> -> input.sum() }
-
 private fun part2(input: List<Int>): Int {
-    val frequencies = mutableListOf(0)
+    val seenFrequencies = mutableSetOf<Int>()
     var index = 0
+    var currentFrequency = 0
 
     while (true) {
-        val change = input[index % input.size]
-        val resultingFrequency = frequencies.last() + change
-        if (frequencies.contains(resultingFrequency)) return resultingFrequency
-        frequencies.add(resultingFrequency)
+        if (!seenFrequencies.add(currentFrequency)) return currentFrequency
+        currentFrequency += input[index % input.size]
         index++
     }
 }
