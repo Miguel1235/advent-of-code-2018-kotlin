@@ -41,7 +41,7 @@ fun main() {
 }
  """
             )
-            val year = "2017"
+            val year = "2018"
 
             ProcessBuilder("aocd", newDayNum, year)
                 .redirectOutput(ProcessBuilder.Redirect.to(File("$projectDir/src", "Day$newDayNum.txt")))
