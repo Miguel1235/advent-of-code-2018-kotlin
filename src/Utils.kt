@@ -66,6 +66,15 @@ fun <T> List<T>.prettyPrint() {
     println()
 }
 
+private fun <T> prettyGridPint(grid: List<List<T>>) {
+    for (r in grid.indices) {
+        for (c in grid[0].indices) {
+            print(grid[r][c])
+        }
+        println()
+    }
+}
+
 fun Char.offsetLetter(offset: Int): Char {
     val lower = this.lowercaseChar()
     if(lower == '-') return ' '
