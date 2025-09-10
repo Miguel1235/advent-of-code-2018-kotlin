@@ -17,15 +17,9 @@ private fun compressString(polymer: String): String {
 }
 
 private val part1 = { input: String -> compressString(input).count() }
-
-private fun part2(input: String): Int {
-    val letters = input.lowercase().toSet().sorted()
-
-    return letters.minOf {
-        val trim = input.replace(Regex("[${it.lowercaseChar()}${it.uppercaseChar()}]"), "")
-        compressString(trim).count()
-    }
-}
+private val part2 = { input: String -> input.lowercase().toSet().sorted().minOf {
+    compressString(input.replace(Regex("[${it.lowercaseChar()}${it.uppercaseChar()}]"), "")).count()
+}}
 
 fun main() {
     val testInput = readInput("Day05_test").first()
