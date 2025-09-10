@@ -3,17 +3,19 @@ import kotlin.text.last
 
 fun hasOppositePolarity(f: Char, s: Char) = (f.isLowerCase() && s.isUpperCase()) || (f.isUpperCase() && s.isLowerCase())
 private fun compressString(polymer: String): String {
-    val chunks = polymer.windowed(2, 1).toMutableList()
-    if(polymer.isEmpty()) return ""
-    for(i in chunks.indices) {
-        val  chunk = chunks[i]
-        val f = chunk.first()
-        val s = chunk.last()
-        if(hasOppositePolarity(f,s) && f.equals(s, ignoreCase = true)) {
-            return compressString(polymer.removeRange(i, i+2))
+    if (polymer.isEmpty()) return ""
+    val stack = StringBuilder()
+    for (char in polymer) {
+        if (stack.isNotEmpty() &&
+            char.equals(stack.last(), ignoreCase = true) &&
+            hasOppositePolarity(stack.last(), char)
+        ) {
+            stack.setLength(stack.length - 1)
+        } else {
+            stack.append(char)
         }
     }
-    return polymer
+    return stack.toString()
 }
 
 private val part1 = { input: String -> compressString(input).count() }
