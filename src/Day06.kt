@@ -6,12 +6,8 @@ private fun part1(cords: List<Pair<Int, Int>>, isPart2: Boolean = false, lessTha
 
     for (r in -maxR until maxR) {
         for (c in -maxC until maxC) {
-            val dist = buildMap {
-                for (cord in cords) {
-                    val distance = kotlin.math.abs(cord.first - r) + kotlin.math.abs(cord.second - c)
-                    put(cord, distance)
-                }
-            }
+            val dist = cords.associateWith { kotlin.math.abs(it.first - r) + kotlin.math.abs(it.second - c) }
+
             if (isPart2 && dist.values.sum() < lessThan) minCounts++
             val sortedByDistance = dist.toList().sortedBy { it.second }
             val minDistance = sortedByDistance.first().second
@@ -23,9 +19,9 @@ private fun part1(cords: List<Pair<Int, Int>>, isPart2: Boolean = false, lessTha
 }
 
 private val parseInput = { input: List<String> ->
-    input.mapIndexed { index, s ->
-        val (c, r) = s.split(", ").map { it.toInt() }
-        Pair(r, c)
+    input.map {
+        val (c, r) = it.split(", ").map(String::toInt)
+        r to c
     }
 }
 
