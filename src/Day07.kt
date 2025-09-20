@@ -1,45 +1,50 @@
-private fun part1(tasks: MutableMap<Char, MutableList<Char>>): Int {
-    visitDependenciesInOrder(tasks).println()
-    return 0
+private fun part1(tasks: MutableMap<Char, MutableList<Char>>): String {
+    return topoSortFlat(tasks)
 }
 
 private fun parseInput(input: List<String>): MutableMap<Char, MutableList<Char>> {
-    val tasks = mutableMapOf<Char, MutableList<Char>>()
-    for (dep in input) {
-        val (a, b) = dep.filter { it.isUpperCase() }.drop(1).toList()
-        tasks.merge(a, mutableListOf(b)) { old, new -> old.apply { addAll(new) } }
+    return input.fold(mutableMapOf<Char, MutableList<Char>>()) { acc, dep ->
+        val (a, b) = dep.asSequence()
+            .filter { it.isUpperCase() }
+            .drop(1)
+            .take(2)
+            .toList()
+        acc.getOrPut(a) { mutableListOf() }.add(b)
+        acc
     }
-    return tasks
 }
 
-
-private fun visitDependenciesInOrder(dependencyTree: MutableMap<Char, MutableList<Char>>): String {
-    val visited = mutableSetOf<Char>()
-    val result = mutableListOf<Char>()
-    val allNodes = (dependencyTree.keys + dependencyTree.values.flatten()).toSet().sorted()
-
-    fun dfs(node: Char) {
-        if (node in visited) return
-        visited.add(node)
-        dependencyTree[node]?.sorted()?.forEach { dependency ->
-            dfs(dependency)
-        }
-        result.add(node)
-    }
-
-    allNodes.forEach { node ->
-        if (node !in visited) {
-            dfs(node)
+fun topoSortFlat(tree: Map<Char, List<Char>>): String {
+    val allNodes = tree.keys + tree.values.flatten()
+    val indegree = allNodes.associateWith { 0 }.toMutableMap()
+    for (deps in tree.values) {
+        for (d in deps) {
+            indegree[d] = indegree.getValue(d) + 1
         }
     }
-    return result.joinToString("")
+
+    val result = StringBuilder()
+    val available = java.util.PriorityQueue<Char>()
+    indegree.filterValues { it == 0 }.keys.forEach { available.add(it) }
+
+    while (available.isNotEmpty()) {
+        val node = available.poll()
+        result.append(node)
+
+        for (dep in tree[node].orEmpty()) {
+            indegree[dep] = indegree.getValue(dep) - 1
+            if (indegree[dep] == 0) available.add(dep)
+        }
+    }
+
+    return result.toString()
 }
 
 fun main() {
     val testInput = parseInput(readInput("Day07_test"))
-    check(part1(testInput) == 0) // CABDFE
+    check(part1(testInput) == "CABDFE")
 
     val input = parseInput(readInput("Day07"))
-    check(part1(input) == 0) // GKWBYARVMZDUCETFPSIXQJLHNO  GKWBYAZDRVMUCETFSXPQIJLHNO WBGKYARVMZTDEPUCSXQIJFLHNO
+    check(part1(input) == "GKRVWBESYAMZDPTIUCFXQJLHNO")
 }
  
