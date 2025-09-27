@@ -3,58 +3,57 @@ data class MarbleGame(val players: Int, val lastMarble: Int) {
         var next: MarbleNode = this
         var prev: MarbleNode = this
 
-        fun insertAfter(newNode: MarbleNode) {
-            newNode.next = this.next
-            newNode.prev = this
-            this.next.prev = newNode
-            this.next = newNode
+        fun insertAfter(newNode: MarbleNode): MarbleNode = newNode.also {
+            it.next = this.next
+            it.prev = this
+            this.next.prev = it
+            this.next = it
         }
 
-        fun remove(): MarbleNode {
+        fun remove(): MarbleNode = this.next.also {
             this.prev.next = this.next
             this.next.prev = this.prev
-            return this.next
         }
 
-        fun moveClockwise(steps: Int): MarbleNode {
+        fun move(steps: Int): MarbleNode {
             var current = this
-            repeat(steps) { current = current.next }
+            if (steps >= 0) {
+                repeat(steps) { current = current.next }
+            } else {
+                repeat(-steps) { current = current.prev }
+            }
             return current
         }
+    }
 
-        fun moveCounterClockwise(steps: Int): MarbleNode {
-            var current = this
-            repeat(steps) { current = current.prev }
-            return current
-        }
+    private companion object {
+        const val SPECIAL = 23
+        const val BACK = 7
     }
 
     fun play(): Long {
         val scores = LongArray(players)
         var currentMarble = MarbleNode(0)
-        var currentPlayer = 0
         for (marble in 1..lastMarble) {
-            if (marble % 23 == 0) {
-                scores[currentPlayer] += marble.toLong()
-                val marbleToRemove = currentMarble.moveCounterClockwise(7)
-                scores[currentPlayer] += marbleToRemove.value.toLong()
+            val player = (marble - 1) % players
+            if (marble % SPECIAL == 0) {
+                val marbleToRemove = currentMarble.move(-BACK)
+                scores[player] += marble.toLong() + marbleToRemove.value
                 currentMarble = marbleToRemove.remove()
             } else {
-                val insertPosition = currentMarble.moveClockwise(1)
-                val newMarble = MarbleNode(marble)
-                insertPosition.insertAfter(newMarble)
-                currentMarble = newMarble
+                currentMarble = currentMarble.move(1).insertAfter(MarbleNode(marble))
             }
-            currentPlayer = (currentPlayer + 1) % players
         }
         return scores.maxOrNull() ?: 0L
     }
 }
 
 private fun part1(input: String, isPart2: Boolean = false): Long {
-    val lineRegex = Regex("""(\d+) players; last marble is worth (\d+)""")
-    val (players, lastMarble) = lineRegex.find(input)!!.groupValues.drop(1).map { it.toInt() }
-    return MarbleGame(players, if (!isPart2) lastMarble else lastMarble * 100).play()
+    val regex = Regex("""(\d+)\s+players; last marble is worth\s+(\d+)""")
+    val (playersS, lastS) = requireNotNull(regex.find(input)) { "Invalid input: $input" }.destructured
+    val players = playersS.toInt()
+    val last = lastS.toInt() * if (isPart2) 100 else 1
+    return MarbleGame(players, last).play()
 }
 
 fun main() {
@@ -64,6 +63,5 @@ fun main() {
     val input = readInput("Day09").first()
     check(part1(input) == 428690L)
     check(part1(input, true) == 3628143500L)
-
 }
  
