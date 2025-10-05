@@ -1,5 +1,7 @@
 private fun part1(input: List<String>): Int {
-    val initialState = input.first().split(":").drop(1).first().trim()
+    val marginList = List(50) { '.' }
+    val initialState = marginList + input.first().split(":").drop(1).first().trim().toMutableList() + marginList
+    println(initialState.joinToString(""))
 
     val notesList = input.drop(2)
     val notes = buildMap {
@@ -25,8 +27,8 @@ fun main() {
     check(part1(testInput) == 0)
     check(part2(testInput) == 0)
      
-//    val input = readInput("Day12")
-//    check(part1(input) == 0)
-//    check(part2(input) == 0)
+    val input = readInput("Day12")
+    check(part1(input) == 0)
+    check(part2(input) == 0)
 }
  
