@@ -10,23 +10,39 @@ private fun part1(input: List<String>): Int {
         }
     }
 
+    println(notes)
+
     val noteSize = notes.keys.first().length + 1
     var initialState = initialStateList.joinToString("")
-    val chunks = initialState.chunked(noteSize)
-
     println(initialState)
-    val r = buildList {
-        for(chunk in chunks) {
-            println(chunk)
-            if(chunk in notes.keys) {
-                println("found match!")
-                add(notes.getValue(chunk))
-            } else {
-                add(chunk)
-            }
+//    val chunks = initialState.chunked(noteSize)
+
+
+    for(note in notes) {
+//        println(note)
+        if(initialState.contains(note.key)) {
+            println("found match on note $note!")
+            initialState = initialState.replaceFirst(note.key, note.value)
         }
+        println(initialState)
     }
-    println(r.joinToString(""))
+    println(initialState)
+
+//    println(chunks)
+
+//    println(initialState)
+//    val r = buildList {
+//        for(chunk in chunks) {
+////            println(chunk)
+//            if(chunk in notes.keys) {
+////                println("found match!")
+//                add(notes.getValue(chunk))
+//            } else {
+//                add(chunk)
+//            }
+//        }
+//    }
+//    println(r.joinToString(""))
     return 0
 }
 
