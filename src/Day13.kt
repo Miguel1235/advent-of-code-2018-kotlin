@@ -1,15 +1,55 @@
+
 private fun part1(input: List<String>): Int {
     val grid = input.map { it.toList() }
     val cartSigns = mutableListOf<Char>('<', '>', '^', 'v')
 
-    data class Path(val r: Int, val c: Int, val pic: Char)
+    data class Path(val r: Int, val c: Int, val pic: Char) {
+        override fun toString(): String {
+            return pic.toString()
+        }
+    }
+
+
+    data class Cart(var r: Int, var c: Int, var direction: Directions) {
+        fun moveCart(track: List<Path>) {
+            val currentTrack = track.first { it.r == r && it.c == c }
+            when (currentTrack.pic) {
+                '/' -> direction = when (direction) {
+                    Directions.UP -> Directions.RIGHT
+                    Directions.RIGHT -> Directions.UP
+                    Directions.DOWN -> Directions.LEFT
+                    Directions.LEFT -> Directions.DOWN
+                }
+
+                '\\' -> direction = when (direction) {
+                    Directions.UP -> Directions.LEFT
+                    Directions.LEFT -> Directions.UP
+                    Directions.DOWN -> Directions.RIGHT
+                    Directions.RIGHT -> Directions.DOWN
+                }
+            }
+            when (direction) {
+                Directions.UP -> r--
+                Directions.DOWN -> r++
+                Directions.LEFT -> c--
+                Directions.RIGHT -> c++
+            }
+        }
+    }
+
 
     val carts = buildList {
         for(r in grid.indices) {
             for(c in grid[r].indices) {
                 val item = grid[r][c]
                 if(cartSigns.contains(item)) {
-                    add(Path(r,c, item))
+                    add(Cart(r,c, when(item) {
+                        '>' -> Directions.RIGHT
+                        '<' -> Directions.LEFT
+                        '^' -> Directions.UP
+                        'v' -> Directions.DOWN
+                        else -> throw Exception("Invalid cart sign: $item")
+                    }))
                 }
             }
         }
@@ -28,6 +68,7 @@ private fun part1(input: List<String>): Int {
     }.filter { it.pic != ' ' }
 
     println(tracks)
+    tracks.prettyPrint()
     println(carts)
 
     return 0
