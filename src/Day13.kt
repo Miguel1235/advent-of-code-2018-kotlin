@@ -93,8 +93,6 @@ private fun part2(carts: List<Cart>, tracks: List<Path>): Pair<Int, Int> {
         }
     }
     val (r, c) = newCarts.first()
-    println(newCarts)
-    printGrid(tracks, newCarts)
     return Pair(c, r)
 }
 
