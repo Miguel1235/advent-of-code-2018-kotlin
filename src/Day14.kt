@@ -3,26 +3,20 @@ private fun part1(input: List<String>): Int {
     var elf1P = 0
     var elf2P = 1
 
-    repeat(20) {
-        recipes.forEachIndexed { i, p ->
-            val r = when(i) {
-                elf1P % recipes.size -> "($p)"
-                elf2P % recipes.size -> "[$p]"
-                else -> p
-            }
-            print(" $r ")
-        }
-        println()
+    val prevRecipes = 890691
+    val recipes2Take = 10
 
-
+    while(recipes.size < prevRecipes + recipes2Take) {
         val elf1V = recipes[elf1P % recipes.size]
         val elf2V = recipes[elf2P % recipes.size]
 
         val newRecipes = (elf1V + elf2V).toString().toList().map { it.toString().toInt() }
         recipes.addAll(newRecipes)
-        elf1P += (elf1V + 1)
-        elf2P += (elf2V + 1)
+
+        elf1P = (elf1P + elf1V + 1) % recipes.size
+        elf2P = (elf2P + elf2V + 1) % recipes.size
     }
+    println(recipes.takeLast(recipes2Take).joinToString(""))
     return 0
 }
 
